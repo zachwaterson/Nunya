@@ -20,6 +20,7 @@ See the file LICENSE for details.
 #include "kernelcore.h"
 #include "cmd_line.h"
 #include "disk.h"
+#include "iso.h"
 
 /*
 This is the C initialization point of the kernel.
@@ -52,6 +53,56 @@ int kernel_main() {
 
     //change text color to white after bootup
     console_set_fgcolor(255, 255, 255);
+    //test ISO filesystem
+    struct iso_dir *test_directory = iso_dopen("/", 3);
+    console_printf("The directory is at %x\n", test_directory);
+
+
+    struct directory_record *test_record = iso_dread(test_directory);
+    // while (test_record) {
+    //     console_printf("The test record is at %x\n", test_record);
+    //     console_printf("Directory file identifier is %s\n", test_record->file_identifier);
+    //     test_record = iso_dread(test_directory);
+    // }
+
+
+
+    // struct iso_file *file_test = iso_fopen("/INNER_TE/NO_EXIST.TXT", test->ata_unit);
+    // console_printf("Value of file_test pointer is: %x\n", file_test);
+
+
+    // struct iso_file *file_test = iso_fopen("/U_P_TEST", test->ata_unit);
+    // struct iso_file *inner_file_test = iso_fopen("/INNER_TE/INNER_TE.TXT", test->ata_unit);
+
+    // console_printf("The process pointer is %x\n", file_test);
+    // console_printf("The inner text file pointer is %x\n", inner_file_test);
+
+    // uint8_t *process_data = kmalloc(file_test->data_length);
+
+    struct iso_file *text_file_test = iso_fopen("/TEXT.TXT", test_directory->ata_unit);
+    console_printf("The text file pointer is %x\n", text_file_test);
+    char file_read[text_file_test->data_length];
+    int num_read = iso_fread(file_read, 1, text_file_test->data_length, text_file_test);
+    console_printf("File read says: %s\n", file_read);
+
+    // console_printf("[sl] data_length: %d\n", file_test->data_length);
+    // int num_read = iso_fread(process_data, 1, file_test->data_length, file_test);
+
+    // struct process *p = process_create(file_test->data_length, PAGE_SIZE);
+
+
+    // uint32_t real_addr;
+    // if (!pagetable_getmap(p->pagetable, 0x80000000, &real_addr)) {
+    //     console_printf("[sl] Unable to get map\n");
+    //     halt();
+    // }
+
+    // memcpy((void *)real_addr, (void *)process_data, file_test->data_length);
+
+    // console_printf("i was wondering\n");
+
+    // process_yield();
+
 
     while(1) {
         cmd_line_attempt(keyboard_read_str());
