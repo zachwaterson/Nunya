@@ -97,7 +97,7 @@ static void process_switch(int newstate) {
     while (1) {
         current = (struct process *)list_pop_head(&ready_list);
         if (current) {
-            console_printf("Loading a new current process struct at address %x\n", current);
+            // console_printf("Loading a new current process struct at address %x\n", current);
             break;
         }
         interrupt_unblock();

@@ -78,6 +78,8 @@ int kernel_main() {
     console_printf("The process pointer is %x\n", file_test);
     console_printf("the data length is:%x\n", file_test->data_length);
     uint8_t *process_data = kmalloc(file_test->data_length);
+    int num_read = iso_fread(process_data, 1, file_test->data_length, file_test);
+
     console_printf("creating process\n");
     struct process *p = process_create(file_test->data_length, PAGE_SIZE);
 
