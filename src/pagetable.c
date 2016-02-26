@@ -8,6 +8,7 @@ See the file LICENSE for details.
 #include "memory_raw.h"
 #include "string.h"
 #include "kernelcore.h"
+#include "console.h"
 
 #define ENTRIES_PER_TABLE (PAGE_SIZE/4)
 
@@ -178,6 +179,7 @@ void pagetable_alloc(struct pagetable *p, unsigned vaddr, unsigned length,
     while (npages > 0) {
         unsigned paddr;
         if (!pagetable_getmap(p, vaddr, &paddr)) {
+            // console_printf("mapping for vaddr %x\n", vaddr);
             pagetable_map(p, vaddr, 0, flags | PAGE_FLAG_ALLOC);
         }
         vaddr += PAGE_SIZE;

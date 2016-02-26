@@ -56,8 +56,8 @@ struct process *process_create(unsigned code_size, unsigned stack_size) {
     struct process *p;
 
     p = (struct process *)memory_alloc_page(1);
-
     p->pagetable = pagetable_create();
+
     pagetable_init(p->pagetable);
     pagetable_alloc(p->pagetable, PROCESS_ENTRY_POINT, code_size,
                     PAGE_FLAG_USER | PAGE_FLAG_READWRITE);
@@ -74,7 +74,6 @@ struct process *process_create(unsigned code_size, unsigned stack_size) {
 
 static void process_switch(int newstate) {
     interrupt_block();
-
     if (current) {
         if (current->state != PROCESS_STATE_CRADLE) {
             asm("pushl %ebp");
@@ -98,6 +97,7 @@ static void process_switch(int newstate) {
     while (1) {
         current = (struct process *)list_pop_head(&ready_list);
         if (current) {
+            console_printf("Loading a new current process struct at address %x\n", current);
             break;
         }
         interrupt_unblock();
@@ -159,6 +159,10 @@ void process_wakeup_all(struct list *q) {
         p->state = PROCESS_STATE_READY;
         list_push_tail(&ready_list, &p->node);
     }
+}
+
+void process_add_to_list(struct process *p) {
+    list_push_tail(&ready_list, &p->node);
 }
 
 void process_dump(struct process *p) {

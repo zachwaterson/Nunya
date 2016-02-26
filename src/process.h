@@ -42,6 +42,9 @@ void process_wait(struct list *q);
 void process_wakeup(struct list *q);
 void process_wakeup_all(struct list *q);
 
+void process_add_to_list(struct process *p);
+
+
 extern struct process *current;
 
 #endif
